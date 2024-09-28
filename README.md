@@ -1,11 +1,13 @@
-# plain-aes &emsp;[![codecov badge]][codecov link] [![build status badge]][travisci]  [![docs.rs status]][docs.rs]
+# plain-aes &emsp;[![codecov badge]][codecov link] [![build status badge]][travisci]  [![docs.rs status]][docs.rs] [![downloads badge]][crates.io]
 
 [docs.rs]: https://docs.rs/plain-aes/latest/
 [docs.rs status]: https://img.shields.io/docsrs/plain-aes
-[codecov badge]: https://codecov.io/gh/emdCatalyst/plain-aes/graph/badge.svg?token=2W043B5A8G
+[codecov badge]: https://codecov.io/gh/emdCatalyst/plain-aes/branch/master/graph/badge.svg?token=2W043B5A8G
 [codecov link]: https://codecov.io/gh/emdCatalyst/plain-aes
 [build status badge]: https://app.travis-ci.com/emdCatalyst/plain-aes.svg?token=DeyV4My8VyqbJ4HAgzPE
 [travisci]: https://app.travis-ci.com/emdCatalyst/plain-aes
+[downloads badge]: https://img.shields.io/crates/d/plain-aes
+[crates.io]: https://crates.io/crates/plain-aes
 
 An implementation of Rijndael's cipher, commonly known as **A**dvanced **E**ncryption **S**tandard.
 
@@ -27,14 +29,6 @@ An implementation of Rijndael's cipher, commonly known as **A**dvanced **E**ncry
 [Encryptable]: https://docs.rs/plain-aes/latest/plain-aes/trait.Encryptable.html
 [internal]: https://docs.rs/plain-aes/latest/plain-aes/internal/index.html
 
-## Test coverage
-
-- This crate is tested using [tarpaulin].
-- Currently boasts a 100% line coverage.
-- See the project's [codecov page][codecov link] for more information.
-
-[tarpaulin]: https://github.com/xd009642/tarpaulin
-
 ## Usage
 
 To use the crate, either add `plain-aes` to your `Cargo.toml`'s dependecies, or run `cargo add plain-aes`.\
@@ -55,10 +49,17 @@ assert!(expected_enrypted.iter().eq(encrypted_message.iter()))
 
 Refer to [the docs][docs.rs], or the *tests* folder for in-depth examples and documentation.
 
+## Test coverage
+
+- This crate is tested using [tarpaulin].
+- Currently boasts a 100% line coverage.
+- See the project's [codecov page][codecov link] for more information.
+
+[tarpaulin]: https://github.com/xd009642/tarpaulin
+
 ## License &emsp; [![license]][crates.io]
 
 [license]: https://img.shields.io/crates/l/plain-aes
-[crates.io]: https://crates.io/crates/plain-aes
 
 This project is licensed under both the MIT and Apache 2.0 License.
 See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.

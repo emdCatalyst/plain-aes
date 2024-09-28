@@ -1,10 +1,41 @@
+//! # plain-aes
+//!
+//! This crate implements Rijndael's cipher, in 128 bits and 192 bits modes respectively.
+//!
+//! ## Considerations
+//! * Within this crate, "block" or "block of data" refers specifically to a 16-byte sequence, as defined in the [FIPS 197 specification](https://csrc.nist.gov/pubs/fips/197/final).
+//! * For efficiency, most affine transformations and operations within GF(2^8) (e.g., polynomial multiplication) are implemented using pre-computed lookup tables.
+//! * While this crate is comprehensively tested, it should not be used in security-critical applications due to potential vulnerabilities. Modern CPUs offer hardware-accelerated AES, and some even have dedicated cryptographic coprocessors. These hardware features provide a more secure and performant solution for critical applications.
+//! ## Getting started
+//! 1. Run `cargo add plain-aes` or add `plain-aes` to your `Cargo.toml`.
+//! 2. Copy one of the examples included in [encrypt]/[decrypt], or refer to the tests folder in the Github repo to get started.
 pub use internal::KeyExpansionError;
 use internal::{decrypt_block, encrypt_block, ExpandedKey};
 /// This module encapsulates all internal operations for this crate.
 pub mod internal;
-/// A trait implemented by types that can be used by [encrypt] or [decrypt].
-/// * This is meant to serve as an interface allowing various types to be passed directly to the encryption/decryption algorithm,
-/// For example, you could implement this trait on a file handle, and you could pass the file handle directly without extra logic.
+/// A trait implemented by types that can be used as input for encryption or decryption operations.
+///
+/// This trait provides a unified interface for different data types, allowing you to pass them directly to the encryption/decryption algorithm without requiring additional logic.
+///
+/// For example, you could implement this trait on a file handle to encrypt or decrypt the contents of a file directly.
+///
+/// # Examples
+///
+/// ```
+/// use plain_aes::{encrypt, Encryptable, CipherVersion, ModeOfOperation};
+/// struct MyData {
+///     content: String,
+/// }
+///
+/// impl Encryptable for MyData {
+///     fn data(&self) -> Option<&[u8]> {
+///         Some(self.content.as_bytes())
+///     }
+/// }
+///
+/// let data = MyData { content: "example usage of Encryptable".to_string() };
+/// let encrypted_data = encrypt(data, CipherVersion::Aes128("This lib is cool".as_bytes(), ModeOfOperation::ECB));
+/// ```
 pub trait Encryptable {
     /// Returns a dynamic slice containing the byte sequence of the content to be encrypted.
     fn data(&self) -> Option<&[u8]>;
@@ -14,7 +45,7 @@ pub enum ModeOfOperation<'a> {
     CBC(&'a [u8]),
     ECB,
 }
-/// The cipher version to use (AES-128, AES-192), each cipher version encapsulates a key and [ModeOfOperation].
+/// The cipher version to use, each cipher version encapsulates a key and [ModeOfOperation].
 pub enum CipherVersion<'a> {
     Aes128(&'a [u8], ModeOfOperation<'a>),
     Aes192(&'a [u8], ModeOfOperation<'a>),
@@ -26,8 +57,10 @@ pub enum OperationError {
     KeyExpansionFailed(KeyExpansionError),
     /// The provided target had no data.
     EmptyTarget,
-    /// The given target's data is less than the block size for AES (16 bytes), and thus cannot be fed to the encryption/decryption algorithm.
-    /// For decryption, the target's data is most likely not a result of an AES-encryption.
+    /// The given target's data is less than the block size for AES, and thus cannot be fed to the encryption/decryption algorithm.
+    ///
+    /// For decryption, the target's data is most likely not a result of an AES encryption.
+    ///
     /// For encryption, consider applying [pkcs5_padding] to the target's data before using [encrypt].
     InvalidTargetSize,
 }
@@ -101,7 +134,7 @@ fn remove_pkcs5_padding(data: &mut Vec<u8>) {
     }
     data.drain(data.len() - (padding_byte as usize)..);
 }
-/// Encrypt an [Encryptable] type given a cipher version.
+/// Encrypts a data object using the specified cipher version.
 /// # Examples
 /// Encrypting a text message in AES-128-ECB mode of operation.
 /// ```
@@ -123,7 +156,7 @@ fn remove_pkcs5_padding(data: &mut Vec<u8>) {
 /// let iv: [u8; 16] = [
 ///    0x54, 0x68, 0x69, 0x73, 0x20, 0x6C, 0x69, 0x62, 0x20, 0x69, 0x73, 0x20, 0x63, 0x6F,
 ///    0x6F, 0x6C,
-/// ]; // You should not pass a fixed IV manually, this is for testing purposes.
+/// ]; // You should not pass a fixed IV, this is for testing purposes.
 /// let message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultricies egestas nunc luctus congue. Pellentesque in vehicula lectus. Maecenas facilisis in tellus non accumsan. Cras at nisl eros. Donec efficitur dolor vitae odio cursus semper. Nulla facilisi. Nunc sit amet congue tellus. Ut sollicitudin odio ac odio malesuada, in sodales turpis pharetra.";
 /// let key = [0x54, 0x68, 0x69, 0x73, 0x20, 0x6C, 0x69, 0x62, 0x20, 0x63, 0x6F, 0x6F, 0x6C, 0x20, 0x79, 0x61, 0x64, 0x61, 0x20, 0x79, 0x61, 0x64, 0x61, 0x2E,]; // This lib cool yada yada.
 /// let encrypted_message = encrypt(message, CipherVersion::Aes192(&key[..], ModeOfOperation::CBC(&iv))).unwrap();
@@ -211,8 +244,7 @@ where
         },
     }
 }
-
-/// Decrypt an [Encryptable] type given a cipher version.
+/// Decrypts a data object using the specified cipher version.
 /// # Examples
 /// Decrypting a byte sequence encrypted in AES-192-CBC mode of operation.
 /// ```
@@ -220,7 +252,7 @@ where
 /// let iv: [u8; 16] = [
 ///    0x54, 0x68, 0x69, 0x73, 0x20, 0x6C, 0x69, 0x62, 0x20, 0x69, 0x73, 0x20, 0x63, 0x6F,
 ///    0x6F, 0x6C,
-/// ]; // You should not pass a fixed IV manually, this is for testing purposes.
+/// ]; // You should not pass a fixed IV, this is for testing purposes.
 /// let message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultricies egestas nunc luctus congue. Pellentesque in vehicula lectus. Maecenas facilisis in tellus non accumsan. Cras at nisl eros. Donec efficitur dolor vitae odio cursus semper. Nulla facilisi. Nunc sit amet congue tellus. Ut sollicitudin odio ac odio malesuada, in sodales turpis pharetra.";
 /// let key = [0x54, 0x68, 0x69, 0x73, 0x20, 0x6C, 0x69, 0x62, 0x20, 0x63, 0x6F, 0x6F, 0x6C, 0x20, 0x79, 0x61, 0x64, 0x61, 0x20, 0x79, 0x61, 0x64, 0x61, 0x2E,]; // This lib cool yada yada.
 /// let encrypted: &[u8] = &[

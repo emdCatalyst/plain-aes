@@ -38,13 +38,16 @@ const MULTIPLE_3: [u8; 256] = [
     0x3b, 0x38, 0x3d, 0x3e, 0x37, 0x34, 0x31, 0x32, 0x23, 0x20, 0x25, 0x26, 0x2f, 0x2c, 0x29, 0x2a,
     0x0b, 0x08, 0x0d, 0x0e, 0x07, 0x04, 0x01, 0x02, 0x13, 0x10, 0x15, 0x16, 0x1f, 0x1c, 0x19, 0x1a,
 ];
-/// Encrypt a 16 byte block of data using an expanded key.\
+
+/// Encrypt a single block of data using an expanded key.
+///
 /// This function takes the expanded key, and not the original key,
-///  because it is used to implement [crate::ModeOfOperation].
+///  because it is used to implement [crate::encrypt] for each [crate::ModeOfOperation].
 /// In order not to re-expand the key for every block, the expanded key is used instead.
 /// # Warning
-/// This function does not enforce the block size, passing a block of size other than 16 bytes produces undefined behavior.\
-/// Ideally, you should only use this to implement your own mode of operation, for normal use cases, consider using [crate::encrypt] instead.
+/// This function does not enforce the block size, and as such, passing a block of size other than 16 bytes produces undefined behavior.
+///
+/// Ideally, you should only use this to implement your own mode of operation, for most use cases, you should consider using the higher-level [crate::encrypt] instead.
 pub fn encrypt_block(block: &[u8], expanded_key: &ExpandedKey) -> [u8; 16] {
     use crate::add_round_key;
     let mut cypher_block = [0; 16];

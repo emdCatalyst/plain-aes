@@ -44,7 +44,7 @@ impl fmt::Display for KeyExpansionError {
 
 impl std::error::Error for KeyExpansionError {}
 impl ExpandedKey {
-    /// Takes in the original key, expandes it, returns an instance of the expanded key.
+    /// Expands the given key based on the specified cipher version.
     pub fn new(cipher_version: &CipherVersion) -> Result<ExpandedKey, KeyExpansionError> {
         let key = cipher_version.key();
         match cipher_version {
@@ -105,6 +105,7 @@ impl ExpandedKey {
         self.round_num
     }
     /// Substitute a word from the key with it's equivalant from Rijndael's S-box.
+    ///
     /// A word is a 4 byte sequence.
     fn sub_word(word: &mut [u8; 4]) {
         for i in 0..4 {

@@ -195,13 +195,15 @@ fn inv_mix_columns(state: &mut [u8; 16]) {
         ^ MULTIPLE_14[orig_state[15] as usize];
 }
 
-/// Decrypt a 16 byte block of data using an expanded key.\
+/// Decrypt a single block of data using an expanded key.
+///
 /// This function takes the expanded key, and not the original key,
-///  because it is used to implement [crate::ModeOfOperation].
+///  because it is used to implement [crate::decrypt] for each [crate::ModeOfOperation].
 /// In order not to re-expand the key for every block, the expanded key is used instead.
 /// # Warning
-/// This function does not enforce the block size, passing a block of size other than 16 bytes produces undefined behavior.\
-/// Ideally, you should only use this to implement your own mode of operation, for normal use cases, consider using [crate::decrypt] instead.
+/// This function does not enforce the block size, and as such, passing a block of size other than 16 bytes produces undefined behavior.
+///
+/// Ideally, you should only use this to implement your own mode of operation, for most use cases, you should consider using the higher-level [crate::decrypt] instead.
 
 pub fn decrypt_block(cypher_block: &[u8], expanded_key: &ExpandedKey) -> [u8; 16] {
     use crate::add_round_key;
