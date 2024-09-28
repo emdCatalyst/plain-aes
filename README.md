@@ -1,4 +1,4 @@
-# plain-aes &emsp;[![codecov badge]][codecov link] [![build status badge]][travisci]  [![docs.rs status]][docs.rs] [![downloads badge]][crates.io]
+# plain-aes &emsp;[![codecov badge]][codecov link] [![build status badge]][travisci]  [![docs.rs status]][docs.rs]
 
 [docs.rs]: https://docs.rs/plain-aes/latest/
 [docs.rs status]: https://img.shields.io/docsrs/plain-aes
@@ -6,7 +6,6 @@
 [codecov link]: https://codecov.io/gh/emdCatalyst/plain-aes
 [build status badge]: https://app.travis-ci.com/emdCatalyst/plain-aes.svg?token=DeyV4My8VyqbJ4HAgzPE
 [travisci]: https://app.travis-ci.com/emdCatalyst/plain-aes
-[downloads badge]: https://img.shields.io/crates/d/plain-aes
 [crates.io]: https://crates.io/crates/plain-aes
 
 An implementation of Rijndael's cipher, commonly known as **A**dvanced **E**ncryption **S**tandard.
@@ -26,8 +25,8 @@ An implementation of Rijndael's cipher, commonly known as **A**dvanced **E**ncry
 - Ability to encrypt/decrypt any custom data structure that implements the [Encryptable] trait.
 
 [FIPS 197 Final]: https://csrc.nist.gov/pubs/fips/197/final
-[Encryptable]: https://docs.rs/plain-aes/latest/plain-aes/trait.Encryptable.html
-[internal]: https://docs.rs/plain-aes/latest/plain-aes/internal/index.html
+[Encryptable]: https://docs.rs/plain-aes/latest/plain_aes/trait.Encryptable.html
+[internal]: https://docs.rs/plain-aes/latest/plain_aes/internal/index.html
 
 ## Usage
 
