@@ -1,6 +1,6 @@
 [package]
 name = "plain-aes"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Mahdi Djaber <mahdios.dj@gmail.com>"]
 description = "An implementation of Rijndael's cipher, commonly known as AES."
